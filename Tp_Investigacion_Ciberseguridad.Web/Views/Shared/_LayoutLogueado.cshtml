@@ -1,0 +1,93 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutBase.cshtml";
+}
+
+
+<header class="gs-topbar">
+    <div class="d-flex align-items-center gap-2">
+        <button class="gs-sidebar-toggle" id="sidebarToggle" aria-label="Contraer menú">
+            <i class="bi bi-list"></i>
+        </button>
+        <a class="gs-topbar-brand d-flex align-items-center gap-2" href="/">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"
+                      stroke="#00dcb4" stroke-width="2" stroke-linejoin="round" fill="none" />
+                <circle cx="12" cy="12" r="2.5" fill="#00dcb4" />
+            </svg>
+            <span class="fw-semibold">Gestión Segura</span>
+        </a>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+        <div class="gs-topbar-user">
+            <div class="gs-avatar">
+                @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
+            </div>
+            <div class="gs-topbar-user-info d-none d-md-block">
+                <span class="gs-topbar-username">@User.Identity?.Name</span>
+                <span class="gs-topbar-role">
+                    @(User.IsInRole("Admin") ? "Administrador" : "Usuario")
+                </span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="gs-app-shell">
+
+    
+    <aside class="gs-sidebar" id="sidebar">
+
+        <nav class="gs-sidebar-nav">
+
+            
+            <a asp-controller="Home" asp-action="Index"
+                   class="gs-nav-item" title="Inicio">
+                <i class="bi bi-house-door"></i>
+                <span class="gs-nav-label">Inicio</span>
+            </a>
+
+            
+            @if (!User.IsInRole("Admin"))
+            {
+                <a asp-controller="Account" asp-action="Perfil"
+                       class="gs-nav-item" title="Perfil">
+                    <i class="bi bi-person"></i>
+                    <span class="gs-nav-label">Perfil</span>
+                </a>
+            }
+
+           
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-controller="Admin" asp-action="Usuarios"
+                       class="gs-nav-item" title="Usuarios">
+                    <i class="bi bi-people"></i>
+                    <span class="gs-nav-label">Usuarios</span>
+                </a>
+            }
+
+        </nav>
+
+       
+        <div class="gs-sidebar-footer">
+            <a asp-controller="Account" asp-action="Logout"
+                   class="gs-nav-item gs-nav-item--danger" title="Cerrar sesión">
+                <i class="bi bi-box-arrow-left"></i>
+                <span class="gs-nav-label">Salir</span>
+            </a>
+        </div>
+
+    </aside>
+
+    <main class="gs-main-content">
+        @RenderBody()
+    </main>
+
+</div>
+
+@section Scripts {
+    @await RenderSectionAsync("Scripts", required: false)
+}
+
+

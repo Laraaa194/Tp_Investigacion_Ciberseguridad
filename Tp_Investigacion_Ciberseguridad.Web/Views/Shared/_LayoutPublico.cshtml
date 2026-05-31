@@ -1,0 +1,36 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutBase.cshtml";
+}
+
+<nav class="navbar navbar-dark gs-navbar">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"
+                      stroke="#00bcd4" stroke-width="2" stroke-linejoin="round" fill="none" />
+                <circle cx="12" cy="12" r="2.5" fill="#00dcb4" />
+            </svg>
+            <span class="fw-semibold">Gestión Segura</span>
+        </a>
+        <div class="d-flex align-items-center gap-2">
+            <a asp-controller="Account" asp-action="InicioSesion" class="btn btn-link text-white text-decoration-none">
+                Iniciar sesión
+            </a>
+            <a asp-controller="Account" asp-action="Registro" class="btn gs-btn-register">
+                Registrarse
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="gs-page-bg">
+    <div class="gs-page-overlay"></div>
+    <main>
+
+        @RenderBody()
+    </main>
+</div>
+
+@section Scripts {
+    @await RenderSectionAsync("Scripts", required: false)
+}

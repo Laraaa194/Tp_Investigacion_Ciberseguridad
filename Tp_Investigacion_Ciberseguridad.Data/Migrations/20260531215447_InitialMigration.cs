@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Tp_Investigacion_Ciberseguridad.Web.Data.Migrations
+namespace Tp_Investigacion_Ciberseguridad.Data.Migrations
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration

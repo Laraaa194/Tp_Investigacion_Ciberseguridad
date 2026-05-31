@@ -2,15 +2,27 @@
 @model RegistroViewModel
 
 @{
+    Layout = "~/Views/Shared/_LayoutPublico.cshtml";
     ViewData["Title"] = "Crear cuenta";
 }
 <link href="~/css/account.css" rel="stylesheet" />
+
+
 
 <div class="gs-wrap">
     <div style="width: 100%; max-width: 480px;">
         <h1 class="gs-title">Crear una cuenta</h1>
         <p class="gs-subtitle">Completá tus datos para empezar.</p>
 
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="gs-validation-error mb-3">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <p class="mb-1">@error.ErrorMessage</p>
+                }
+            </div>
+        }
         <div class="gs-card">
             <form asp-action="Registrar" method="post">
                 @Html.AntiForgeryToken()

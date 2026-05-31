@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Tp_Investigacion_Ciberseguridad.Web.Models.Entidades
+namespace Tp_Investigacion_Ciberseguridad.Core.Entidades
 {
     public class Usuario : IdentityUser
     {
-       
-        public string Nombre { get; set; }
-        public string Apellido { get; set; }
+
+        public string Nombre { get; set; } = string.Empty;
+        public string Apellido { get; set; } = string.Empty;
         public DateTime? FechaNacimiento { get; set; }
 
         
@@ -15,7 +15,7 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Models.Entidades
 
         public Usuario() : base()
         {
-            FechaRegistro = DateTime.UtcNow;
+            FechaRegistro = DateTime.Now;
         }
     }
 }

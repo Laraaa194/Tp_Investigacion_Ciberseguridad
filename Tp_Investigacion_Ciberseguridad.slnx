@@ -1,3 +1,5 @@
 <Solution>
+  <Project Path="Tp_Investigacion_Ciberseguridad.Core/Tp_Investigacion_Ciberseguridad.Core.csproj" />
+  <Project Path="Tp_Investigacion_Ciberseguridad.Data/Tp_Investigacion_Ciberseguridad.Data.csproj" />
   <Project Path="Tp_Investigacion_Ciberseguridad.Web/Tp_Investigacion_Ciberseguridad.Web.csproj" />
 </Solution>

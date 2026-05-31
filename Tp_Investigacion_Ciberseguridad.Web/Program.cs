@@ -1,9 +1,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Tp_Investigacion_Ciberseguridad.Web.Data;
-using Tp_Investigacion_Ciberseguridad.Web.Models.Entidades;
+using Tp_Investigacion_Ciberseguridad.Core.Entidades;
+using Tp_Investigacion_Ciberseguridad.Core.Interfaces;
+using Tp_Investigacion_Ciberseguridad.Core.Servicios;
+using Tp_Investigacion_Ciberseguridad.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<IUsuarioServicio, UsuarioServicio>();
 
 builder.Services.AddDbContext<GestionUsuariosDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
