@@ -1,0 +1,128 @@
+﻿/* ---- Variables ---- */
+:root {
+    --gs-bg2: #0d2229;
+    --gs-accent: #00dcb4;
+    --gs-text: #ffffff;
+    --gs-muted: #a0b8c0;
+    --gs-navbar-h: 60px;
+}
+
+/* ---- Navbar ---- */
+.gs-navbar {
+    height: var(--gs-navbar-h);
+    background: rgba(10, 26, 31, 0.95);
+    border-bottom: 1px solid rgba(0, 188, 212, 0.12);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    backdrop-filter: blur(6px);
+}
+
+.gs-btn-register {
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 6px;
+    padding: 6px 18px;
+    font-size: 14px;
+    transition: background .2s, border-color .2s;
+}
+
+    .gs-btn-register:hover {
+        background: rgba(255,255,255,0.08);
+        border-color: rgba(255,255,255,0.6);
+        color: #fff;
+    }
+
+/* ---- Hero ---- */
+.gs-hero {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    padding-top: var(--gs-navbar-h);
+}
+
+.gs-page-bg {
+    position: relative;
+    min-height: calc(100vh - 60px);
+    background-image: url('/img/fondo_ciberseg.jpg');
+    background-size: cover;
+    background-position: center;
+}
+.gs-page-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 26, 31, 0.7);
+    backdrop-filter: blur(4px);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.gs-hero-content {
+    position: relative;
+    max-width: 640px;
+    padding: 2rem 0;
+}
+
+.gs-hero-title {
+    font-size: clamp(2.6rem, 6vw, 4rem);
+    font-weight: 700;
+    color: var(--gs-text);
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+}
+
+.gs-accent {
+    color: var(--gs-accent);
+}
+
+.gs-hero-subtitle {
+    font-size: 1.05rem;
+    color: var(--gs-muted);
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    max-width: 520px;
+}
+
+/* ---- Botones Hero ---- */
+.gs-btn-primary {
+    background: var(--gs-accent);
+    color: #05181c;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 26px;
+    font-size: 15px;
+    transition: opacity .2s, transform .15s;
+}
+
+
+    .gs-btn-primary:hover {
+        background: var(--gs-accent);
+        opacity: .88;
+        transform: translateY(-1px);
+        color: #05181c;
+    }
+.gs-btn-secondary {
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 6px;
+    padding: 12px 26px;
+    font-size: 15px;
+    transition: background .2s;
+}
+
+    .gs-btn-secondary:hover {
+        background: rgba(255,255,255,0.12);
+        color: #fff;
+    }
+
+/* ---- Reset body ---- */
+body {
+    background: var(--gs-bg);
+    color: var(--gs-text);
+    margin: 0;
+}
