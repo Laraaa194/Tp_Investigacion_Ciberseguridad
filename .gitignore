@@ -480,3 +480,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+
+Tp_Investigacion_Ciberseguridad.Web/appsettings.Development.json

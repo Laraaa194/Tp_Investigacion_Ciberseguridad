@@ -1,4 +1,17 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Tp_Investigacion_Ciberseguridad.Web.Data;
+using Tp_Investigacion_Ciberseguridad.Web.Models.Entidades;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<GestionUsuariosDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// 2. Configurar Identity apuntando a tu DbContext REAL
+builder.Services.AddIdentity<Usuario, Rol>()
+    .AddEntityFrameworkStores<GestionUsuariosDbContext>() // <-- Acá tiene que decir GestionUsuariosDbContext
+    .AddDefaultTokenProviders();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
