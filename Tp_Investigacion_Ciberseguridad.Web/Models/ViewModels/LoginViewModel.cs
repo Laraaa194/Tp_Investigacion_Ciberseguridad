@@ -12,6 +12,8 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Models.ViewModels
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
+
+        //Falso por defecto para que no se recuerde la sesión
         public bool RememberMe { get; set; }
     }
 }

@@ -14,7 +14,6 @@
         <p class="gs-subtitle">Ingresá tus credenciales para acceder a tu cuenta.</p>
 
         <form asp-action="IniciarSesion" method="post">
-            @Html.AntiForgeryToken()
 
             <div asp-validation-summary="ModelOnly" class="gs-validation-error mb-3"></div>
 
@@ -53,7 +52,6 @@
                 </div>
                 <span asp-validation-for="Password" class="gs-validation-error"></span>
             </div>
-
             
             <button type="submit" class="gs-btn">Acceder a la cuenta</button>
 

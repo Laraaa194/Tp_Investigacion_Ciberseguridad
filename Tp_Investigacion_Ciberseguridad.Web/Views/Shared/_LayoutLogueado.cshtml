@@ -2,6 +2,11 @@
     Layout = "~/Views/Shared/_LayoutBase.cshtml";
 }
 
+@section Styles {
+    <link href="~/css/logueado.css" rel="stylesheet" />
+    @await RenderSectionAsync("Styles", required: false)
+}
+
 
 <header class="gs-topbar">
     <div class="d-flex align-items-center gap-2">
@@ -41,7 +46,7 @@
         <nav class="gs-sidebar-nav">
 
             
-            <a asp-controller="Home" asp-action="Index"
+            <a asp-controller="Inicio" asp-action="Inicio"
                    class="gs-nav-item" title="Inicio">
                 <i class="bi bi-house-door"></i>
                 <span class="gs-nav-label">Inicio</span>
@@ -50,7 +55,7 @@
             
             @if (!User.IsInRole("Admin"))
             {
-                <a asp-controller="Account" asp-action="Perfil"
+                <a asp-controller="Perfil" asp-action="Perfil"
                        class="gs-nav-item" title="Perfil">
                     <i class="bi bi-person"></i>
                     <span class="gs-nav-label">Perfil</span>
@@ -60,10 +65,10 @@
            
             @if (User.IsInRole("Admin"))
             {
-                <a asp-controller="Admin" asp-action="Usuarios"
-                       class="gs-nav-item" title="Usuarios">
-                    <i class="bi bi-people"></i>
-                    <span class="gs-nav-label">Usuarios</span>
+                <a asp-controller="Admin" asp-action="PanelAdmin"
+                       class="gs-nav-item" title="Panel de Administración">
+                    <i class="bi bi-gear"></i>
+                    <span class="gs-nav-label">Panel de Administración</span>
                 </a>
             }
 
@@ -71,19 +76,22 @@
 
        
         <div class="gs-sidebar-footer">
-            <a asp-controller="Account" asp-action="Logout"
-                   class="gs-nav-item gs-nav-item--danger" title="Cerrar sesión">
-                <i class="bi bi-box-arrow-left"></i>
-                <span class="gs-nav-label">Salir</span>
-            </a>
+            <form asp-controller="Account" asp-action="CerrarSesion" method="post">
+                <button type="submit" class="gs-nav-item gs-nav-item--danger" title="Cerrar sesión">
+                    <i class="bi bi-box-arrow-left"></i>
+                    <span class="gs-nav-label">Salir</span>
+                </button>
+            </form>
         </div>
 
     </aside>
 
-    <main class="gs-main-content">
-        @RenderBody()
-    </main>
-
+    <div class="gs-page-bg">
+        <div class="gs-page-overlay"></div>
+            <main class="gs-main-content">
+                @RenderBody()
+            </main>
+    </div>
 </div>
 
 @section Scripts {

@@ -22,7 +22,31 @@ body {
     color: var(--gs-text);
     margin: 0;
 }
+.gs-page-bg {
+    position: relative;
+    min-height: calc(100vh - 60px);
+}
 
+    /* El fondo va en un pseudo-elemento para poder blurearlo sin afectar el contenido */
+    .gs-page-bg::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url('/img/fondo-ciberseg.png');
+        background-size: cover;
+        background-position: center;
+        filter: blur(2px) brightness(0.2);
+        z-index: 0;
+    }
+
+.gs-page-overlay {
+    display: none;
+}
+
+.gs-main-content {
+    position: relative;
+    z-index: 1;
+}
 
 .gs-topbar {
     position: fixed;
@@ -106,7 +130,6 @@ body {
 
 
 .gs-app-shell {
-    display: flex;
     padding-top: var(--gs-topbar-h);
     min-height: 100vh;
 }
@@ -203,4 +226,12 @@ body {
 
 .gs-app-shell.sidebar-collapsed .gs-main-content {
     margin-left: var(--gs-sidebar-min);
+}
+
+.gs-sidebar-footer button {
+    background: none;
+    border: none;
+    padding: 0;
+    width: 100%;
+    cursor: pointer;
 }

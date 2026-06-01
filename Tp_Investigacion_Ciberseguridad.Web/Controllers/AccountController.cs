@@ -11,11 +11,13 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
 
         private readonly IUsuarioServicio _usuarioServicio;
         private readonly UserManager<Usuario> _userManager;
+        private readonly SignInManager<Usuario> _signInManager;
 
-        public AccountController(IUsuarioServicio usuarioServicio, UserManager<Usuario> userManager)
+        public AccountController(IUsuarioServicio usuarioServicio, UserManager<Usuario> userManager, SignInManager<Usuario> signInManager)
         {
             _usuarioServicio = usuarioServicio;
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
 
@@ -28,7 +30,44 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
         {
             return View();
         }
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> IniciarSesion(LoginViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View("InicioSesion", model);
+
+            var usuario = await _userManager.FindByEmailAsync(model.Email);
+            if (usuario == null)
+            {
+                ModelState.AddModelError(string.Empty, "Usuario o contraseña incorrectos");
+                return View("InicioSesion", model);
+            }
+
+            var resultado = await _signInManager.PasswordSignInAsync(
+                usuario.UserName,
+                model.Password,
+                model.RememberMe,
+                lockoutOnFailure: true
+            );
+
+            if (resultado.Succeeded)
+                return RedirectToAction("Inicio", "Inicio");
+
+            if (resultado.IsLockedOut)
+            {
+                ModelState.AddModelError(string.Empty, "Cuenta bloqueada temporalmente. Intentá de nuevo más tarde.");
+                return View("InicioSesion", model);
+            }
+
+            ModelState.AddModelError(string.Empty, "Usuario o contraseña incorrectos");
+            return View("InicioSesion", model);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Registrar(RegistroViewModel model)
         {
             if (!ModelState.IsValid)
@@ -52,6 +91,20 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
                 ModelState.AddModelError(string.Empty, error.Description);
 
             return View("Registro", model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CerrarSesion()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("InicioSesion", "Account");
+        }
+
+
+        public IActionResult AccesoDenegado()
+        {
+            return View();
         }
     }
 }

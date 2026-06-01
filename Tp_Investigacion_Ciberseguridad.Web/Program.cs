@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tp_Investigacion_Ciberseguridad.Core.Entidades;
 using Tp_Investigacion_Ciberseguridad.Core.Interfaces;
 using Tp_Investigacion_Ciberseguridad.Core.Servicios;
 using Tp_Investigacion_Ciberseguridad.Data;
+using Tp_Investigacion_Ciberseguridad.Data.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,13 +14,38 @@ builder.Services.AddScoped<IUsuarioServicio, UsuarioServicio>();
 builder.Services.AddDbContext<GestionUsuariosDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 2. Configurar Identity apuntando a tu DbContext REAL
-builder.Services.AddIdentity<Usuario, Rol>()
-    .AddEntityFrameworkStores<GestionUsuariosDbContext>() // <-- Acá tiene que decir GestionUsuariosDbContext
-    .AddDefaultTokenProviders();
+builder.Services.AddIdentity<Usuario, Rol>(options =>
+{
+    // Configuración de lockout (fuerza bruta)
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+    options.Lockout.AllowedForNewUsers = true;
+})
+.AddEntityFrameworkStores<GestionUsuariosDbContext>()
+.AddDefaultTokenProviders();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//Configuracion base cookies
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    // Solo enviar cookies por HTTPS, nunca por HTTP
+    options.Secure = CookieSecurePolicy.Always;
+
+    // Impedir que JavaScript acceda a las cookies (protección contra XSS)
+    options.HttpOnly = HttpOnlyPolicy.Always;
+
+    // Controlar desde qué sitios se pueden enviar las cookies (protección contra CSRF)
+    options.MinimumSameSitePolicy = SameSiteMode.Strict;
+});
+
+// Configuración de la cookie de Identity (específica)
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/InicioSesion";
+    options.AccessDeniedPath = "/Account/AccesoDenegado";
+});
 
 var app = builder.Build();
 
@@ -32,7 +59,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-
+app.UseCookiePolicy();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
@@ -42,5 +70,13 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Rol>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Usuario>>();
+    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+    await RoleSeeder.SeedAsync(roleManager, userManager, configuration);
+}
 
 app.Run();
