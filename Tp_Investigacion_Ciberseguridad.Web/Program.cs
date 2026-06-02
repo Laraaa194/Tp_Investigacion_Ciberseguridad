@@ -24,8 +24,20 @@ builder.Services.AddIdentity<Usuario, Rol>(options =>
 .AddEntityFrameworkStores<GestionUsuariosDbContext>()
 .AddDefaultTokenProviders();
 
+builder.Services.AddAuthentication()
+    .AddGoogle(options =>
+    {
+        IConfigurationSection googleAuthNSection =
+            builder.Configuration.GetSection("Authentication:Google");
+
+        // Lee las credenciales del appsettings
+        options.ClientId = googleAuthNSection["ClientId"];
+        options.ClientSecret = googleAuthNSection["ClientSecret"];
+    });
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
 //Configuracion base cookies
 builder.Services.Configure<CookiePolicyOptions>(options =>
@@ -37,7 +49,7 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
     options.HttpOnly = HttpOnlyPolicy.Always;
 
     // Controlar desde qué sitios se pueden enviar las cookies (protección contra CSRF)
-    options.MinimumSameSitePolicy = SameSiteMode.Strict;
+    options.MinimumSameSitePolicy = SameSiteMode.Lax;
 });
 
 // Configuración de la cookie de Identity (específica)
@@ -64,6 +76,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+
+app.MapRazorPages();
 
 app.MapControllerRoute(
     name: "default",

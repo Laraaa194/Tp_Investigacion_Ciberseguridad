@@ -22,13 +22,14 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
         {
             var usuario = await _userManager.GetUserAsync(User);
 
+
             var model = new PerfilViewModel
             {
                 Nombre = usuario.Nombre,
                 Apellido = usuario.Apellido,
                 UserName = usuario.UserName,
                 Email = usuario.Email,
-                FechaNacimiento = (DateTime)usuario.FechaNacimiento,
+                FechaNacimiento = usuario.FechaNacimiento,
             };
 
             return View(model);
