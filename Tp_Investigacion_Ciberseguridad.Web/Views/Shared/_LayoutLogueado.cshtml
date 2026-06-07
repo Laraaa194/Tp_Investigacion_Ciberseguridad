@@ -13,7 +13,7 @@
         <button class="gs-sidebar-toggle" id="sidebarToggle" aria-label="Contraer menú">
             <i class="bi bi-list"></i>
         </button>
-        <a class="gs-topbar-brand d-flex align-items-center gap-2" href="/">
+        <a asp-controller="Inicio" asp-action="Inicio" class="gs-topbar-brand d-flex align-items-center gap-2">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                 <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"
                       stroke="#00dcb4" stroke-width="2" stroke-linejoin="round" fill="none" />
@@ -29,9 +29,9 @@
                 @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
             </div>
             <div class="gs-topbar-user-info d-none d-md-block">
-                <span class="gs-topbar-username">@User.Identity?.Name</span>
+                
                 <span class="gs-topbar-role">
-                    @(User.IsInRole("Admin") ? "Administrador" : "Usuario")
+                    @(User.IsInRole("Admin") ? "Administrador" : "")
                 </span>
             </div>
         </div>
@@ -96,6 +96,7 @@
 
 @section Scripts {
     @await RenderSectionAsync("Scripts", required: false)
+    <script src="~/js/sidebar.js"></script>
 }
 
 

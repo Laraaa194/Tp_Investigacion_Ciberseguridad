@@ -4,4 +4,59 @@
     Layout = "~/Views/Shared/_LayoutLogueado.cshtml";
 }
 
+@model List<Tp_Investigacion_Ciberseguridad.Web.Models.ViewModels.UsuarioAdminViewModel>
+
+@section Styles{
+
+    <link href="~/css/panel-admin.css" rel="stylesheet" />
+}
+
+
 <h1>PANEL DE ADMINISTRACION </h1>
+
+<div class="page-header">
+    <h1>Gestión de Usuarios</h1>
+    <p>Administrá, editá y eliminá usuarios del sistema</p>
+</div>
+
+
+<div class="toolbar">
+    <div class="toolbar-left">
+        <a href="/usuarios/crear" class="btn">+ Crear usuario</a>
+    </div>
+    <div class="toolbar-right">
+        <input class="search" type="text" name="q" placeholder="Buscar usuario..." />
+        <button class="btn outline" type="submit">Buscar</button>
+    </div>
+</div>
+
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Registro</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var usuario in Model)
+            {
+                <tr>
+                    <td><span class="avatar"> @(usuario.Nombre.Substring(0, 1).ToUpper() ?? "U")</span>@usuario.Nombre @usuario.Apellido</td>
+                    <td>@usuario.Email</td>
+                    <td><span class="badge badge-admin">@usuario.Rol</span></td>
+                    <td>@usuario.FechaRegistro.ToString("dd/MM/yyyy")</td>
+                    <td class="acciones">
+                        <a href="/usuarios/1/editar" class="btn-icon edit" title="Editar">✎</a>
+                        <a href="/usuarios/1/eliminar" class="btn-icon delete" title="Eliminar">✕</a>
+                    </td>
+                </tr>
+            }
+           
+        </tbody>
+    </table>
+</div>

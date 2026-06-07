@@ -86,10 +86,14 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
             var resultado = await _userManager.CreateAsync(usuario, model.Password);
 
             if (resultado.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(usuario, "Usuario");
                 return RedirectToAction("InicioSesion");
-
-            foreach (var error in resultado.Errors)
-                ModelState.AddModelError(string.Empty, error.Description);
+            }
+            foreach (var error in resultado.Errors) { 
+            ModelState.AddModelError(string.Empty, error.Description);
+            }
+                
 
             return View("Registro", model);
         }
@@ -140,7 +144,11 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
             else
             {
                 // Si el usuario no existe en tu base de datos, lo creamos automáticamente
+
+
                 var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+
+
                 if (email != null)
                 {
                     var nombreGoogle = info.Principal.FindFirstValue(ClaimTypes.GivenName);
@@ -162,7 +170,7 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
                         resultadoCreacion = await _userManager.AddLoginAsync(nuevoUsuario, info);
                         if (resultadoCreacion.Succeeded)
                         {
-                            // Lo logueamos
+                            await _userManager.AddToRoleAsync(nuevoUsuario, "Usuario");
                             await _signInManager.SignInAsync(nuevoUsuario, isPersistent: false);
                             return LocalRedirect(returnUrl);
                         }
