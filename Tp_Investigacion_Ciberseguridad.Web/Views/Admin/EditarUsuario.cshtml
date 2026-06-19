@@ -1,0 +1,80 @@
+﻿@{
+    ViewData["Title"] = "Editar Usuario";
+    Layout = "~/Views/Shared/_LayoutLogueado.cshtml";
+}
+
+@model Tp_Investigacion_Ciberseguridad.Web.Models.ViewModels.EditarUsuarioViewModel
+
+@section Styles {
+    <link href="~/css/panel-admin.css" rel="stylesheet" />
+    <link href="~/css/crear-usuario.css" rel="stylesheet" />
+}
+
+<div class="page-header">
+    <h1>Editar Usuario</h1>
+    <p>Modificá los datos del usuario seleccionado</p>
+</div>
+
+<div class="card form-card">
+    <form asp-controller="Admin" asp-action="ActualizarUsuario" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="row form-grid">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Nombre">Nombre</label>
+                    <input asp-for="Nombre" class="form-control" placeholder="Ej: Juan" />
+                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Apellido">Apellido</label>
+                    <input asp-for="Apellido" class="form-control" placeholder="Ej: Pérez" />
+                    <span asp-validation-for="Apellido" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="UserName">Nombre de Usuario</label>
+                    <input asp-for="UserName" class="form-control" placeholder="Ej: jperez" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Email">Email</label>
+                    <input asp-for="Email" type="email" class="form-control" placeholder="usuario@correo.com" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="Rol">Rol</label>
+                <select asp-for="Rol" class="form-select">
+                    <option value="">Seleccionar rol...</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Usuario">Usuario</option>
+                </select>
+                <span asp-validation-for="Rol" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a asp-action="PanelAdmin" asp-controller="Admin" class="btn outline">Cancelar</a>
+            <button type="submit" class="btn">Guardar cambios</button>
+        </div>
+
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

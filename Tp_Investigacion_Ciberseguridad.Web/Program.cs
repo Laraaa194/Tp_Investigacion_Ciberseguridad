@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Tp_Investigacion_Ciberseguridad.Core.Entidades;
 using Tp_Investigacion_Ciberseguridad.Core.Interfaces;
-using Tp_Investigacion_Ciberseguridad.Core.Servicios;
 using Tp_Investigacion_Ciberseguridad.Data;
+using Tp_Investigacion_Ciberseguridad.Data.Identity;
 using Tp_Investigacion_Ciberseguridad.Data.Seeders;
+using Tp_Investigacion_Ciberseguridad.Data.Servicios;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddScoped<IAdminServicio, AdminServicio>();
 builder.Services.AddScoped<IUsuarioServicio, UsuarioServicio>();
 
 builder.Services.AddDbContext<GestionUsuariosDbContext>(options =>
@@ -20,7 +22,13 @@ builder.Services.AddIdentity<Usuario, Rol>(options =>
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
     options.Lockout.AllowedForNewUsers = true;
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 8;
 })
+.AddErrorDescriber<IdentityErrorDescriberEsp>()
 .AddEntityFrameworkStores<GestionUsuariosDbContext>()
 .AddDefaultTokenProviders();
 

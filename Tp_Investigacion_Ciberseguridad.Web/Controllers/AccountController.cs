@@ -39,19 +39,14 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
             if (!ModelState.IsValid)
                 return View("InicioSesion", model);
 
-            var usuario = await _userManager.FindByEmailAsync(model.Email);
+            var usuario = await _usuarioServicio.ObtenerUsuarioPorEmail(model.Email);
             if (usuario == null)
             {
                 ModelState.AddModelError(string.Empty, "Usuario o contraseña incorrectos");
                 return View("InicioSesion", model);
             }
 
-            var resultado = await _signInManager.PasswordSignInAsync(
-                usuario.UserName,
-                model.Password,
-                model.RememberMe,
-                lockoutOnFailure: true
-            );
+            var resultado = await _usuarioServicio.IniciarSesionAsync(usuario, model.Password, model.RememberMe);
 
             if (resultado.Succeeded)
                 return RedirectToAction("Inicio", "Inicio");
@@ -83,11 +78,11 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
                 FechaNacimiento = model.FechaNacimiento
             };
 
-            var resultado = await _userManager.CreateAsync(usuario, model.Password);
+            var resultado = await _usuarioServicio.GuardarUsuarioAsync(usuario, model.Password);
 
             if (resultado.Succeeded)
             {
-                await _userManager.AddToRoleAsync(usuario, "Usuario");
+                await _usuarioServicio.AsignarRolAsync(usuario, "Usuario");
                 return RedirectToAction("InicioSesion");
             }
             foreach (var error in resultado.Errors) { 

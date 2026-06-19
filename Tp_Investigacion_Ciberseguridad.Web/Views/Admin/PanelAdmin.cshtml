@@ -22,7 +22,7 @@
 
 <div class="toolbar">
     <div class="toolbar-left">
-        <a href="/usuarios/crear" class="btn">+ Crear usuario</a>
+        <a asp-action="NuevoUsuario" asp-controller="Admin" class="btn">+ Crear usuario</a>
     </div>
     <div class="toolbar-right">
         <input class="search" type="text" name="q" placeholder="Buscar usuario..." />
@@ -30,6 +30,23 @@
     </div>
 </div>
 
+
+
+@if (TempData["MensajeError"] != null)
+{
+    <div class="alert alerta-danger alert-dismissible fade show" role="alert">
+        @TempData["MensajeError"]
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["MensajeUsuarioExitoso"] != null)
+{
+    <div class="alert alerta-success alert-dismissible fade show" role="alert">
+        @TempData["MensajeUsuarioExitoso"]
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+    </div>
+}
 
 <div class="card">
     <table>
@@ -51,8 +68,14 @@
                     <td><span class="badge badge-admin">@usuario.Rol</span></td>
                     <td>@usuario.FechaRegistro.ToString("dd/MM/yyyy")</td>
                     <td class="acciones">
-                        <a href="/usuarios/1/editar" class="btn-icon edit" title="Editar">✎</a>
-                        <a href="/usuarios/1/eliminar" class="btn-icon delete" title="Eliminar">✕</a>
+                        <a asp-action="EditarUsuario" asp-route-id="@usuario.Id" asp-controller="Admin" class="btn-icon edit" title="Editar">✎</a>
+                        <form asp-action="EliminarUsuario" asp-controller="Admin" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@usuario.Id" />
+                            <button type="submit" class="btn-icon delete" title="Eliminar"
+                                    onclick="return confirm('¿Seguro que querés eliminar a @usuario.Nombre @usuario.Apellido?');">
+                                ✕
+                            </button>
+                        </form>
                     </td>
                 </tr>
             }

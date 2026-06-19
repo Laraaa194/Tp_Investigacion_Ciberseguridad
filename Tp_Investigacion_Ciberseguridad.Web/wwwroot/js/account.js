@@ -1,6 +1,7 @@
-﻿function togglePassword() {
-    const input = document.getElementById('passwordInput');
-    const icon = document.getElementById('passIcon');
+﻿function togglePassword(inputId = 'passwordInput', iconId = 'passIcon') {
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+
     if (input.type === 'password') {
         input.type = 'text';
         icon.className = 'bi bi-eye-slash';
