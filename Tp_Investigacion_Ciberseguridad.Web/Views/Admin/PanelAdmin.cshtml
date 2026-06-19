@@ -1,0 +1,85 @@
+﻿@{
+
+    ViewData["Title"] = "Panel de Administración";
+    Layout = "~/Views/Shared/_LayoutLogueado.cshtml";
+}
+
+@model List<Tp_Investigacion_Ciberseguridad.Web.Models.ViewModels.UsuarioAdminViewModel>
+
+@section Styles{
+
+    <link href="~/css/panel-admin.css" rel="stylesheet" />
+}
+
+
+<h1>PANEL DE ADMINISTRACION </h1>
+
+<div class="page-header">
+    <h1>Gestión de Usuarios</h1>
+    <p>Administrá, editá y eliminá usuarios del sistema</p>
+</div>
+
+
+<div class="toolbar">
+    <div class="toolbar-left">
+        <a asp-action="NuevoUsuario" asp-controller="Admin" class="btn">+ Crear usuario</a>
+    </div>
+    <div class="toolbar-right">
+        <input class="search" type="text" name="q" placeholder="Buscar usuario..." />
+        <button class="btn outline" type="submit">Buscar</button>
+    </div>
+</div>
+
+
+
+@if (TempData["MensajeError"] != null)
+{
+    <div class="alert alerta-danger alert-dismissible fade show" role="alert">
+        @TempData["MensajeError"]
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["MensajeUsuarioExitoso"] != null)
+{
+    <div class="alert alerta-success alert-dismissible fade show" role="alert">
+        @TempData["MensajeUsuarioExitoso"]
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Registro</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var usuario in Model)
+            {
+                <tr>
+                    <td><span class="avatar"> @(usuario.Nombre.Substring(0, 1).ToUpper() ?? "U")</span>@usuario.Nombre @usuario.Apellido</td>
+                    <td>@usuario.Email</td>
+                    <td><span class="badge badge-admin">@usuario.Rol</span></td>
+                    <td>@usuario.FechaRegistro.ToString("dd/MM/yyyy")</td>
+                    <td class="acciones">
+                        <a asp-action="EditarUsuario" asp-route-id="@usuario.Id" asp-controller="Admin" class="btn-icon edit" title="Editar">✎</a>
+                        <form asp-action="EliminarUsuario" asp-controller="Admin" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@usuario.Id" />
+                            <button type="submit" class="btn-icon delete" title="Eliminar"
+                                    onclick="return confirm('¿Seguro que querés eliminar a @usuario.Nombre @usuario.Apellido?');">
+                                ✕
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+           
+        </tbody>
+    </table>
+</div>

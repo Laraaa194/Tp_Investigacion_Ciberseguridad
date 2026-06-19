@@ -1,8 +1,30 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Inicio";
+    Layout = "~/Views/Shared/_LayoutPublico.cshtml";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="gs-hero">
+
+    <div class="container-fluid px-4 h-100 d-flex align-items-center mt-5">
+        <div class="gs-hero-content mt-5 ms-3">
+            <h1 class="gs-hero-title">
+                Bienvenido a <br />
+                <span class="gs-accent">Gestión Segura</span>
+            </h1>
+            <p class="gs-hero-subtitle">
+                Iniciá sesión para gestionar tu perfil,
+                desde un entorno seguro y centralizado.
+            </p>
+            <div class="d-flex gap-3 flex-wrap">
+                <a asp-controller="Account" asp-action="Registro"
+                       class="btn gs-btn-primary">
+                    Crear cuenta &rarr;
+                </a>
+                <a asp-controller="Account" asp-action="InicioSesion"
+                       class="btn gs-btn-secondary">
+                    Iniciar sesión
+                </a>
+            </div>
+        </div>
+    </div>
+</section>

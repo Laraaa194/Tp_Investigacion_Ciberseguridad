@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Tp_Investigacion_Ciberseguridad.Web.Models.Entidades
+namespace Tp_Investigacion_Ciberseguridad.Core.Entidades
 {
     public class Rol : IdentityRole
     {
-        public string Descripcion { get; set; }
+        public string Descripcion { get; set; } = string.Empty;
         public int NivelJerarquia { get; set; } 
         public DateTime FechaCreacion { get; set; }
         public bool EstaActivo { get; set; }

@@ -1,0 +1,59 @@
+﻿@model Tp_Investigacion_Ciberseguridad.Web.Models.ViewModels.PerfilViewModel
+
+@{
+    ViewData["Title"] = "Ver perfil";
+    Layout = "~/Views/Shared/_LayoutLogueado.cshtml";
+}
+
+@section Styles {
+    <link href="~/css/perfil.css" rel="stylesheet" />
+}
+
+<div class="profile-wrapper">
+    <div class="profile-card">
+
+        <div class="profile-header">
+            <div class="avatar-container">
+                <div class="avatar" id="avatarCircle">
+                    @(Model.Nombre?[0].ToString().ToUpper())@(Model.Apellido?[0].ToString().ToUpper())
+                </div>
+                <div class="avatar-upload" title="Cambiar foto">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 5v14M5 12h14" /></svg>
+                </div>
+            </div>
+            <div class="header-info">
+                <div class="header-title" id="displayName">@Model.Nombre @Model.Apellido</div>
+                <div class="header-subtitle">@@@Model.UserName</div>
+                <div class="header-badge"><div class="badge-dot"></div>CUENTA ACTIVA</div>
+            </div>
+        </div>
+
+        <div class="section-label">Información personal</div>
+
+        <div class="fields-grid">
+            <div class="field-group">
+                <div class="field-label">Nombre</div>
+                <input class="field-value" id="f_nombre" value="@Model.Nombre" readonly />
+            </div>
+            <div class="field-group">
+                <div class="field-label">Apellido</div>
+                <input class="field-value" id="f_apellido" value="@Model.Apellido" readonly />
+            </div>
+            <div class="field-group field-full">
+                <div class="field-label">Nombre de usuario</div>
+                <input class="field-value" id="f_username" value="@Model.UserName" readonly />
+            </div>
+            <div class="field-group field-full">
+                <div class="field-label">Email</div>
+                <input class="field-value" id="f_email" value="@Model.Email" readonly />
+            </div>
+           
+            
+                <div class="field-group">
+                    <div class="field-label">Fecha de nacimiento</div>
+                    <input class="field-value" id="f_fecha" type="date" value="@Model.FechaNacimiento?.ToString("yyyy-MM-dd")" readonly />
+                </div>
+            
+            
+            
+        </div>

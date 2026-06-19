@@ -3,17 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Tp_Investigacion_Ciberseguridad.Web.Data;
+using Tp_Investigacion_Ciberseguridad.Data;
 
 #nullable disable
 
-namespace Tp_Investigacion_Ciberseguridad.Web.Data.Migrations
+namespace Tp_Investigacion_Ciberseguridad.Data.Migrations
 {
     [DbContext(typeof(GestionUsuariosDbContext))]
-    partial class GestionUsuariosDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260531215447_InitialMigration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,7 +131,7 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Tp_Investigacion_Ciberseguridad.Web.Models.Entidades.Rol", b =>
+            modelBuilder.Entity("Tp_Investigacion_Ciberseguridad.Core.Entidades.Rol", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -168,7 +171,7 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Data.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Tp_Investigacion_Ciberseguridad.Web.Models.Entidades.Usuario", b =>
+            modelBuilder.Entity("Tp_Investigacion_Ciberseguridad.Core.Entidades.Usuario", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -252,7 +255,7 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Tp_Investigacion_Ciberseguridad.Web.Models.Entidades.Rol", null)
+                    b.HasOne("Tp_Investigacion_Ciberseguridad.Core.Entidades.Rol", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -261,7 +264,7 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Tp_Investigacion_Ciberseguridad.Web.Models.Entidades.Usuario", null)
+                    b.HasOne("Tp_Investigacion_Ciberseguridad.Core.Entidades.Usuario", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -270,7 +273,7 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Tp_Investigacion_Ciberseguridad.Web.Models.Entidades.Usuario", null)
+                    b.HasOne("Tp_Investigacion_Ciberseguridad.Core.Entidades.Usuario", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -279,13 +282,13 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Tp_Investigacion_Ciberseguridad.Web.Models.Entidades.Rol", null)
+                    b.HasOne("Tp_Investigacion_Ciberseguridad.Core.Entidades.Rol", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Tp_Investigacion_Ciberseguridad.Web.Models.Entidades.Usuario", null)
+                    b.HasOne("Tp_Investigacion_Ciberseguridad.Core.Entidades.Usuario", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -294,7 +297,7 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Tp_Investigacion_Ciberseguridad.Web.Models.Entidades.Usuario", null)
+                    b.HasOne("Tp_Investigacion_Ciberseguridad.Core.Entidades.Usuario", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

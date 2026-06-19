@@ -1,0 +1,74 @@
+﻿.form-card {
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.form-grid {
+    --bs-gutter-x: 20px;
+    --bs-gutter-y: 14px;
+}
+
+.form-card .form-control,
+.form-card .form-select {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 9px 12px;
+    color: var(--text);
+    font-size: 13px;
+}
+
+    .form-card .form-control:focus,
+    .form-card .form-select:focus {
+        background: var(--panel-2);
+        border-color: var(--accent);
+        color: var(--text);
+        box-shadow: 0 0 0 2px var(--accent-soft);
+    }
+
+    .form-card .form-control::placeholder {
+        color: var(--muted);
+    }
+
+    .form-card .form-select option {
+        background: var(--panel);
+    }
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+}
+
+.gs-pass-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+    .gs-pass-wrap .gs-input,
+    .gs-pass-wrap .form-control {
+        width: 100%;
+        padding-right: 40px;
+    }
+
+.gs-pass-toggle {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    transition: color .2s;
+}
+
+    .gs-pass-toggle:hover {
+        color: var(--accent);
+    }

@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
-using Tp_Investigacion_Ciberseguridad.Web.Models.Entidades;
+using Tp_Investigacion_Ciberseguridad.Core.Entidades;
 
-namespace Tp_Investigacion_Ciberseguridad.Web.Data
+namespace Tp_Investigacion_Ciberseguridad.Data
 {
     public class GestionUsuariosDbContext : IdentityDbContext<Usuario, Rol, string>
     {

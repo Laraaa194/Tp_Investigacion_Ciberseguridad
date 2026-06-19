@@ -1,0 +1,124 @@
+﻿
+@{
+    ViewData["Title"] = "Nuevo Usuario";
+    Layout = "~/Views/Shared/_LayoutLogueado.cshtml";
+}
+
+@model Tp_Investigacion_Ciberseguridad.Web.Models.ViewModels.NuevoUsuarioViewModel
+
+@section Styles {
+    <link href="~/css/panel-admin.css" rel="stylesheet" />
+    <link href="~/css/crear-usuario.css" rel="stylesheet" />
+}
+
+<div class="page-header">
+    <h1>Crear Usuario</h1>
+    <p>Completá los datos para registrar un nuevo usuario en el sistema</p>
+</div>
+
+<div class="card form-card">
+    <form asp-controller="Admin" asp-action="NuevoUsuario" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="row form-grid">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Nombre">Nombre</label>
+                    <input asp-for="Nombre" class="form-control" placeholder="Ej: Juan" />
+                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Apellido">Apellido</label>
+                    <input asp-for="Apellido" class="form-control" placeholder="Ej: Pérez" />
+                    <span asp-validation-for="Apellido" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="UserName">Nombre de Usuario</label>
+                    <input asp-for="UserName" class="form-control" placeholder="Ej: jperez" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Email">Email</label>
+                    <input asp-for="Email" type="email" class="form-control" placeholder="usuario@correo.com" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </div>
+
+            
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Password">Contraseña</label>
+                    <div class="gs-pass-wrap">
+                        <input asp-for="Password"
+                               id="passwordInput"
+                               type="password"
+                               class="gs-input form-control"
+                               placeholder="••••••••"
+                               autocomplete="new-password" />
+                        <button type="button"
+                                class="gs-pass-toggle"
+                                onclick="togglePassword('passwordInput', 'passIcon')"
+                                aria-label="Mostrar u ocultar contraseña">
+                            <i class="bi bi-eye" id="passIcon"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="ConfirmarPassword">Confirmar Contraseña</label>
+                    <div class="gs-pass-wrap">
+                        <input asp-for="ConfirmarPassword"
+                               id="confirmarPasswordInput"
+                               type="password"
+                               class="gs-input form-control"
+                               placeholder="••••••••"
+                               autocomplete="new-password" />
+                        <button type="button"
+                                class="gs-pass-toggle"
+                                onclick="togglePassword('confirmarPasswordInput', 'confirmPassIcon')"
+                                aria-label="Mostrar u ocultar contraseña">
+                            <i class="bi bi-eye" id="confirmPassIcon"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="ConfirmarPassword" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="Rol">Rol</label>
+                <select asp-for="Rol" class="form-select">
+                    <option value="">Seleccionar rol...</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Usuario">Usuario</option>
+                </select>
+                <span asp-validation-for="Rol" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a asp-action="PanelAdmin" asp-controller="Admin" class="btn outline">Cancelar</a>
+            <button type="submit" class="btn">Crear usuario</button>
+        </div>
+
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
