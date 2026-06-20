@@ -8,9 +8,10 @@ namespace Tp_Investigacion_Ciberseguridad.Core.Interfaces
     public interface IAdminServicio
     {
         Task<List<Usuario>> ObtenerUsuariosAsync();
-
         Task<string> ObtenerRolAsync(Usuario usuario);
-
         Task EliminarUsuarioAsync(string id);
+        Task<int> ContarUsuariosAsync();
+        Task<int> ContarUsuariosNuevosAsync(int dias);
+        Task<List<Usuario>> ObtenerUltimosRegistradosAsync(int cantidad);
     }
 }

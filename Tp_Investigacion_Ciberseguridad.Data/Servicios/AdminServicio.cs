@@ -36,5 +36,26 @@ namespace Tp_Investigacion_Ciberseguridad.Data.Servicios
                 await _userManager.DeleteAsync(usuario);
             }
         }
+
+        public async Task<int> ContarUsuariosAsync()
+        {
+            return await _userManager.Users.CountAsync();
+        }
+
+        public async Task<int> ContarUsuariosNuevosAsync(int dias)
+        {
+            var fechaLimite = DateTime.Now.AddDays(-dias);
+            return await _userManager.Users
+                .Where(u => u.FechaRegistro >= fechaLimite)
+                .CountAsync();
+        }
+
+        public async Task<List<Usuario>> ObtenerUltimosRegistradosAsync(int cantidad)
+        {
+            return await _userManager.Users
+                .OrderByDescending(u => u.FechaRegistro)
+                .Take(cantidad)
+                .ToListAsync();
+        }
     }
 }

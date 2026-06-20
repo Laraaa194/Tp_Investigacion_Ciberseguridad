@@ -11,7 +11,7 @@ namespace Tp_Investigacion_Ciberseguridad.Data
             : base(options)
         {
         }
-
+        public DbSet<RegistroActividad> RegistrosActividad { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             

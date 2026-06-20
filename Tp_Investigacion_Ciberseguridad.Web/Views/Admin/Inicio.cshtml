@@ -1,0 +1,141 @@
+﻿@using Tp_Investigacion_Ciberseguridad.Core.Entidades
+@model Tp_Investigacion_Ciberseguridad.Web.Models.ViewModels.InicioAdminViewModel
+
+@{
+    ViewData["Title"] = "Inicio - Administrador";
+    Layout = "~/Views/Shared/_LayoutLogueado.cshtml";
+}
+
+@section Styles {
+    <link href="~/css/inicio-admin.css" rel="stylesheet" />
+}
+
+<div class="page-header">
+    <h1>Bienvenido, Administrador</h1>
+    <p>Resumen general del sistema · <span id="fecha"></span></p>
+</div>
+
+<div class="kpi-grid">
+    <div class="kpi">
+        <div class="kpi-label">Total de usuarios</div>
+        <div class="kpi-value">@Model.TotalUsuarios</div>
+    </div>
+    <div class="kpi">
+        <div class="kpi-label">Nuevos esta semana</div>
+        <div class="kpi-value">@Model.NuevosEstaSemana</div>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom:24px;">
+    <h2>Acciones rápidas</h2>
+    <div class="actions">
+        <a asp-action="NuevoUsuario" asp-controller="Admin" class="btn">+ Crear usuario</a>
+        <a asp-action="PanelAdmin" asp-controller="Admin" class="btn outline">Ver todos los usuarios</a>
+        <button class="btn outline">Exportar reporte</button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="card">
+        <h2>Últimos usuarios registrados <a asp-action="PanelAdmin" asp-controller="Admin">Ver todos</a></h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Rol</th>
+                    <th>Registro</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.UltimosUsuarios.Any())
+                {
+                    <tr>
+                        <td colspan="3" style="text-align:center">No hay usuarios registrados todavía.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var usuario in Model.UltimosUsuarios)
+                    {
+                        <tr>
+                            <td><span class="avatar">@usuario.Nombre.Substring(0, 1).ToUpper()</span> @usuario.Nombre @usuario.Apellido</td>
+                            <td><span class="badge badge-admin">@usuario.Rol</span></td>
+                            <td>@usuario.FechaRegistro.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>Actividad reciente</h2>
+        @if (!Model.ActividadReciente.Any())
+        {
+            <p style="color:#888">Sin actividad reciente.</p>
+        }
+        else
+        {
+            @foreach (var r in Model.ActividadReciente)
+            {
+                <div class="log-item">
+                    <div class="log-icon">@IconoPara(r.Tipo)</div>
+                    <div class="log-text">
+                        <b>@r.AdminNombre</b> @TextoPara(r.Tipo) <b>@r.UsuarioAfectadoNombre</b>
+                        @if (!string.IsNullOrEmpty(r.Detalle))
+                        {
+                            <span>@r.Detalle</span>
+                        }
+                        <small>@r.Fecha.ToString("dd/MM/yyyy HH:mm")</small>
+                    </div>
+                </div>
+            }
+        }
+
+@functions {
+    string IconoPara(TipoActividad tipo) => tipo switch
+    {
+        TipoActividad.CreacionUsuario => "+",
+        TipoActividad.EdicionUsuario => "✎",
+        TipoActividad.EliminacionUsuario => "×",
+        TipoActividad.CambioRol => "↻",
+        _ => "•"
+    };
+
+    string TextoPara(TipoActividad tipo) => tipo switch
+    {
+        TipoActividad.CreacionUsuario => "creó al usuario",
+        TipoActividad.EdicionUsuario => "editó al usuario",
+        TipoActividad.EliminacionUsuario => "eliminó al usuario",
+        TipoActividad.CambioRol => "cambió el rol de",
+        _ => "realizó una acción sobre"
+    };
+}
+    </div>
+
+    <div class="card">
+        <h2>Alertas de seguridad</h2>
+        <div class="alert warn">
+            <div>
+                <b>3 intentos de login fallidos</b>
+                Cuenta: carlos.diaz@empresa.com — últimos 15 min
+            </div>
+        </div>
+        <div class="alert danger">
+            <div>
+                <b>Cuenta bloqueada temporalmente</b>
+                Usuario: pedro.lopez — superó el límite de intentos
+            </div>
+        </div>
+        <div class="alert warn">
+            <div>
+                <b>23 usuarios inactivos hace más de 30 días</b>
+                Considerá depurarlos o enviar un recordatorio.
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/inicio-admin.js"></script>
+}
