@@ -45,6 +45,34 @@ namespace Tp_Investigacion_Ciberseguridad.Data.Identity
                 Code = nameof(DuplicateUserName),
                 Description = $"El nombre de usuario '{userName}' ya está en uso."
             };
-       
+
+        public override IdentityError InvalidRoleName(string role)
+            => new IdentityError
+            {
+                Code = nameof(InvalidRoleName),
+                Description = $"El nombre de rol '{role}' no es válido."
+            };
+
+        public override IdentityError DuplicateRoleName(string role)
+            => new IdentityError
+            {
+                Code = nameof(DuplicateRoleName),
+                Description = $"El nombre de rol '{role}' ya existe."
+            };
+
+        public override IdentityError UserAlreadyInRole(string role)
+            => new IdentityError
+            {
+                Code = nameof(UserAlreadyInRole),
+                Description = $"El usuario ya pertenece al rol '{role}'."
+            };
+
+        public override IdentityError UserNotInRole(string role)
+            => new IdentityError
+            {
+                Code = nameof(UserNotInRole),
+                Description = $"El usuario no pertenece al rol '{role}'."
+            };
+
     }
 }

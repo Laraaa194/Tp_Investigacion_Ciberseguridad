@@ -25,12 +25,12 @@
         <a asp-action="NuevoUsuario" asp-controller="Admin" class="btn">+ Crear usuario</a>
     </div>
     <div class="toolbar-right">
-        <input class="search" type="text" name="q" placeholder="Buscar usuario..." />
-        <button class="btn outline" type="submit">Buscar</button>
+        <div class="search-wrapper">
+            <i class="bi bi-search search-icon"></i>
+            <input class="search" type="text" name="q" placeholder="Buscar usuario..." />
+        </div>
     </div>
 </div>
-
-
 
 @if (TempData["MensajeError"] != null)
 {
@@ -47,6 +47,10 @@
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
     </div>
 }
+
+<form id="antiforgery-holder" style="display:none">
+    @Html.AntiForgeryToken()
+</form>
 
 <div class="card">
     <table>
@@ -83,3 +87,7 @@
         </tbody>
     </table>
 </div>
+
+@section Scripts {
+    <script src="~/js/buscador.js"></script>
+}

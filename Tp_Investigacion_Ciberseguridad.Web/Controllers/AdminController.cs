@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Tp_Investigacion_Ciberseguridad.Core.Entidades;
 using Tp_Investigacion_Ciberseguridad.Core.Interfaces;
-using Tp_Investigacion_Ciberseguridad.Data.Servicios;
 using Tp_Investigacion_Ciberseguridad.Web.Models.ViewModels;
 
 namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
@@ -52,7 +51,7 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
         public async Task<IActionResult> NuevoUsuarioAsync(NuevoUsuarioViewModel model)
         {
             if (!ModelState.IsValid)
-            { 
+            {
                 return View(model);
             }
 
@@ -89,16 +88,18 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EliminarUsuario(string id) {
+        public async Task<IActionResult> EliminarUsuario(string id)
+        {
 
             if (id == null)
             {
                 TempData["MensajeError"] = "ID de usuario inexistente.";
             }
-            else { 
+            else
+            {
                 await _adminServicio.EliminarUsuarioAsync(id);
             }
-            
+
 
             return RedirectToAction("PanelAdmin");
         }
@@ -151,7 +152,15 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
             var resultado = await _usuarioServicio.ActualizarUsuarioAsync(usuario);
             if (resultado.Succeeded)
             {
-                await _usuarioServicio.AsignarRolAsync(usuario, model.Rol);
+                var resultadoRol = await _usuarioServicio.AsignarRolAsync(usuario, model.Rol);
+                if (!resultadoRol.Succeeded)
+                {
+                    foreach (var error in resultadoRol.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View(model);
+                }
                 TempData["MensajeUsuarioExitoso"] = "Usuario actualizado exitosamente.";
                 return RedirectToAction("PanelAdmin");
             }
@@ -164,6 +173,20 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
             return View(model);
         }
 
-
+        [HttpGet]
+        public async Task<IActionResult> BuscarUsuarios(string q)
+        {
+            var datos = await _usuarioServicio.BuscarUsuariosAsync(q);
+            var resultado = datos.Select(d => new UsuarioAdminViewModel
+            {
+                Id = d.Usuario.Id,
+                Nombre = d.Usuario.Nombre,
+                Apellido = d.Usuario.Apellido,
+                Email = d.Usuario.Email,
+                Rol = d.Rol,
+                FechaRegistro = d.Usuario.FechaRegistro
+            });
+            return Json(resultado);
+        }
     }
 }
