@@ -20,5 +20,6 @@ namespace Tp_Investigacion_Ciberseguridad.Core.Interfaces
         
         Task<Usuario> ObtenerUsuarioPorIdAsync(string id);
         Task<IdentityResult> ActualizarUsuarioAsync(Usuario usuario);
+        Task<List<(Usuario Usuario, string Rol)>> BuscarUsuariosAsync(string q);
     }
 }
