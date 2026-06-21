@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
 {
 
-    [Authorize]
+    [Authorize(Roles = "Usuario")]
     public class InicioController : Controller
     {
         [Route("Inicio")]
@@ -12,6 +12,5 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
         {
             return View();
         }
-
     }
 }

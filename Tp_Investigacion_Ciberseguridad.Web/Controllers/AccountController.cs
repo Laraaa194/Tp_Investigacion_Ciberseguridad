@@ -49,7 +49,13 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
             var resultado = await _usuarioServicio.IniciarSesionAsync(usuario, model.Password, model.RememberMe);
 
             if (resultado.Succeeded)
+            {
+                if (await _userManager.IsInRoleAsync(usuario, "Admin"))
+                {
+                    return RedirectToAction("Inicio", "Admin");
+                }
                 return RedirectToAction("Inicio", "Inicio");
+            }
 
             if (resultado.IsLockedOut)
             {

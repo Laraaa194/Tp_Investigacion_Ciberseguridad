@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Tp_Investigacion_Ciberseguridad.Core.Entidades;
 using Tp_Investigacion_Ciberseguridad.Core.Interfaces;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Tp_Investigacion_Ciberseguridad.Data.Servicios
 {
@@ -47,6 +49,16 @@ namespace Tp_Investigacion_Ciberseguridad.Data.Servicios
 
         public async Task<IdentityResult> AsignarRolAsync(Usuario usuario, string v)
         {
+            var rolesActuales = await _signInManager.UserManager.GetRolesAsync(usuario);
+
+            if (rolesActuales.Any())
+            {
+                var removeResult = await _signInManager.UserManager.RemoveFromRolesAsync(usuario, rolesActuales);
+                if (!removeResult.Succeeded)
+                {
+                    return removeResult;
+                }
+            }
             return await _signInManager.UserManager.AddToRoleAsync(usuario, v);
         }
 
@@ -69,6 +81,28 @@ namespace Tp_Investigacion_Ciberseguridad.Data.Servicios
         public async Task<IdentityResult> ActualizarUsuarioAsync(Usuario usuario)
         {
             return await _userManager.UpdateAsync(usuario);
+        }
+
+        public async Task<List<(Usuario Usuario, string Rol)>> BuscarUsuariosAsync(string q)
+        {
+            string query = q?.Trim() ?? string.Empty;
+
+            var usuarios = await _userManager.Users
+                .Where(u => string.IsNullOrEmpty(query) ||
+                            u.Nombre.Contains(query) ||
+                            u.Apellido.Contains(query) ||
+                            u.Email.Contains(query))
+                .ToListAsync();
+
+            var resultado = new List<(Usuario Usuario, string Rol)>();
+
+            foreach (var usuario in usuarios)
+            {
+                var roles = await _userManager.GetRolesAsync(usuario);
+                resultado.Add((usuario, roles.FirstOrDefault() ?? string.Empty));
+            }
+
+            return resultado;
         }
     }
 }
