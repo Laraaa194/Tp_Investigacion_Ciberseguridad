@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
+using Tp_Investigacion_Ciberseguridad.Core.Dtos;
 using Tp_Investigacion_Ciberseguridad.Core.Entidades;
 using Tp_Investigacion_Ciberseguridad.Core.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace Tp_Investigacion_Ciberseguridad.Data.Servicios
 {
@@ -23,10 +24,13 @@ namespace Tp_Investigacion_Ciberseguridad.Data.Servicios
 
         public async Task<List<Usuario>> ObtenerUsuariosAsync()
         {
-            return await _userManager.Users.ToListAsync();
+            return await _userManager.Users
+                .OrderBy(u => u.Apellido)
+                .ThenBy(u => u.Nombre)
+                .ToListAsync();
         }
 
-      
+
 
         public async Task EliminarUsuarioAsync(string id)
         {
@@ -56,6 +60,30 @@ namespace Tp_Investigacion_Ciberseguridad.Data.Servicios
                 .OrderByDescending(u => u.FechaRegistro)
                 .Take(cantidad)
                 .ToListAsync();
+        }
+
+        public async Task<List<AlertaSeguridadDto>> ObtenerAlertasUsuariosAsync()
+        {
+            var alertas = new List<AlertaSeguridadDto>();
+            var hoy = DateTime.Now.Date;
+
+
+            var nuevosHoy = await _userManager.Users
+                .Where(u => u.FechaRegistro.Date == hoy)
+                .CountAsync();
+
+            if (nuevosHoy > 0)
+            {
+                alertas.Add(new AlertaSeguridadDto
+                {
+                    Tipo = TipoAlerta.NuevoRegistro,
+                    Titulo = $"{nuevosHoy} usuario(s) nuevos hoy",
+                    Detalle = "Registrados en el día de la fecha",
+                    Fecha = DateTime.Now
+                });
+            }
+
+            return alertas;
         }
     }
 }
