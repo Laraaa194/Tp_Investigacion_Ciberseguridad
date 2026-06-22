@@ -244,12 +244,36 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
                 });
             }
 
+            var alertasUsuarios = await _adminServicio.ObtenerAlertasUsuariosAsync();
+            var alertasActividad = await _auditoriaServicio.ObtenerAlertasActividadAsync();
+
             var modelo = new InicioAdminViewModel
             {
                 TotalUsuarios = await _adminServicio.ContarUsuariosAsync(),
                 NuevosEstaSemana = await _adminServicio.ContarUsuariosNuevosAsync(7),
                 UltimosUsuarios = modeloUltimos,
-                ActividadReciente = await _auditoriaServicio.ObtenerUltimosAsync(5)
+                ActividadReciente = (await _auditoriaServicio.ObtenerUltimosAsync(5))
+                                    .Select(r => new RegistroActividadViewModel
+                                    {
+                                        Id = r.Id,
+                                        AdminNombre = r.AdminNombre,
+                                        Tipo = r.Tipo,
+                                        UsuarioAfectadoNombre = r.UsuarioAfectadoNombre,
+                                        Detalle = r.Detalle,
+                                        Fecha = r.Fecha
+                                    })
+                                    .ToList(),
+
+                AlertasSeguridad = alertasUsuarios.Concat(alertasActividad)
+                    .OrderByDescending(a => a.Fecha)
+                    .Select(a => new AlertaSeguridadViewModel
+                    {
+                        Tipo = a.Tipo,
+                        Titulo = a.Titulo,
+                        Detalle = a.Detalle,
+                        Fecha = a.Fecha
+                    })
+                    .ToList()
             };
 
             return View(modelo);

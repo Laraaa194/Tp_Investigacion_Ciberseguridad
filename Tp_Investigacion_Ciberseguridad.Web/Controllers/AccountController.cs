@@ -13,12 +13,15 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
         private readonly IUsuarioServicio _usuarioServicio;
         private readonly UserManager<Usuario> _userManager;
         private readonly SignInManager<Usuario> _signInManager;
+        private readonly IAuditoriaServicio _auditoriaServicio;
 
-        public AccountController(IUsuarioServicio usuarioServicio, UserManager<Usuario> userManager, SignInManager<Usuario> signInManager)
+        public AccountController(IUsuarioServicio usuarioServicio, UserManager<Usuario> userManager, SignInManager<Usuario> signInManager,
+            IAuditoriaServicio auditoriaServicio)
         {
             _usuarioServicio = usuarioServicio;
             _userManager = userManager;
             _signInManager = signInManager;
+            _auditoriaServicio = auditoriaServicio;
         }
 
 
@@ -59,9 +62,29 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
 
             if (resultado.IsLockedOut)
             {
+                // Se acaba de bloquear en este intento → registramos el bloqueo
+                await _auditoriaServicio.RegistrarAsync(
+                    adminId: "sistema",
+                    adminNombre: "Sistema",
+                    tipo: TipoActividad.CuentaBloqueada,
+                    usuarioAfectadoId: usuario.Id,
+                    usuarioAfectadoNombre: usuario.Email ?? usuario.UserName ?? "Desconocido",
+                    detalle: "Bloqueada por superar el límite de intentos fallidos"
+                );
+
                 ModelState.AddModelError(string.Empty, "Cuenta bloqueada temporalmente. Intentá de nuevo más tarde.");
                 return View("InicioSesion", model);
             }
+
+            // Credenciales incorrectas, pero todavía no bloqueada → registramos el intento fallido
+            await _auditoriaServicio.RegistrarAsync(
+                adminId: "sistema",
+                adminNombre: "Sistema",
+                tipo: TipoActividad.LoginFallido,
+                usuarioAfectadoId: usuario.Id,
+                usuarioAfectadoNombre: usuario.Email ?? usuario.UserName ?? "Desconocido",
+                detalle: "Credenciales inválidas"
+            );
 
             ModelState.AddModelError(string.Empty, "Usuario o contraseña incorrectos");
             return View("InicioSesion", model);

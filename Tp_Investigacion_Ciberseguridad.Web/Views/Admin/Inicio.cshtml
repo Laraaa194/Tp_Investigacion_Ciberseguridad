@@ -1,4 +1,5 @@
 ﻿@using Tp_Investigacion_Ciberseguridad.Core.Entidades
+@using Tp_Investigacion_Ciberseguridad.Core.Dtos
 @model Tp_Investigacion_Ciberseguridad.Web.Models.ViewModels.InicioAdminViewModel
 
 @{
@@ -70,27 +71,60 @@
 
     <div class="card">
         <h2>Actividad reciente</h2>
-        @if (!Model.ActividadReciente.Any())
-        {
-            <p style="color:#888">Sin actividad reciente.</p>
-        }
-        else
-        {
-            @foreach (var r in Model.ActividadReciente)
+        <div class="lista-scroll">
+            @if (!Model.ActividadReciente.Any())
             {
-                <div class="log-item">
-                    <div class="log-icon">@IconoPara(r.Tipo)</div>
-                    <div class="log-text">
-                        <b>@r.AdminNombre</b> @TextoPara(r.Tipo) <b>@r.UsuarioAfectadoNombre</b>
-                        @if (!string.IsNullOrEmpty(r.Detalle))
-                        {
-                            <span>@r.Detalle</span>
-                        }
-                        <small>@r.Fecha.ToString("dd/MM/yyyy HH:mm")</small>
-                    </div>
-                </div>
+                <p style="color:#888">Sin actividad reciente.</p>
             }
-        }
+            else
+            {
+                @foreach (var r in Model.ActividadReciente)
+                {
+                    <div class="log-item">
+                        <div class="log-icon">@IconoPara(r.Tipo)</div>
+                        <div class="log-text">
+                            <b>@r.AdminNombre</b> @TextoPara(r.Tipo) <b>@r.UsuarioAfectadoNombre</b>
+                            @if (!string.IsNullOrEmpty(r.Detalle))
+                            {
+                                <span>@r.Detalle</span>
+                            }
+                            <small>@r.Fecha.ToString("dd/MM/yyyy HH:mm")</small>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Alertas de seguridad</h2>
+        <div class="lista-scroll">
+            @if (!Model.AlertasSeguridad.Any())
+            {
+                <p style="color:#888">Sin alertas por el momento.</p>
+            }
+            else
+            {
+                @foreach (var a in Model.AlertasSeguridad)
+                {
+                    var clase = a.Tipo switch
+                    {
+                        TipoAlerta.CuentaBloqueada => "danger",
+                        TipoAlerta.NuevoRegistro => "success",
+                        _ => "warn" 
+                    };
+                    <div class="alert @clase">
+                        <div>
+                            <b>@a.Titulo</b>
+                            @a.Detalle
+                        </div>
+                    </div>
+                }
+            }
+            
+        </div>
+    </div>
+</div>
 
 @functions {
     string IconoPara(TipoActividad tipo) => tipo switch
@@ -111,30 +145,6 @@
         _ => "realizó una acción sobre"
     };
 }
-    </div>
-
-    <div class="card">
-        <h2>Alertas de seguridad</h2>
-        <div class="alert warn">
-            <div>
-                <b>3 intentos de login fallidos</b>
-                Cuenta: carlos.diaz@empresa.com — últimos 15 min
-            </div>
-        </div>
-        <div class="alert danger">
-            <div>
-                <b>Cuenta bloqueada temporalmente</b>
-                Usuario: pedro.lopez — superó el límite de intentos
-            </div>
-        </div>
-        <div class="alert warn">
-            <div>
-                <b>23 usuarios inactivos hace más de 30 días</b>
-                Considerá depurarlos o enviar un recordatorio.
-            </div>
-        </div>
-    </div>
-</div>
 
 @section Scripts {
     <script src="~/js/inicio-admin.js"></script>

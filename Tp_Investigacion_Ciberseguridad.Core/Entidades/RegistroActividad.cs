@@ -22,7 +22,9 @@ namespace Tp_Investigacion_Ciberseguridad.Core.Entidades
         CreacionUsuario,
         EdicionUsuario,
         EliminacionUsuario,
-        CambioRol
+        CambioRol,
+        LoginFallido,
+        CuentaBloqueada
     }
     }
 

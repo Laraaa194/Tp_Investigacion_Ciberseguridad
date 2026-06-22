@@ -93,13 +93,14 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Rol>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<Usuario>>();
     var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+
     await RoleSeeder.SeedAsync(roleManager, userManager, configuration);
+    await UserSeeder.SeedAsync(userManager);
 }
 
 app.Run();
