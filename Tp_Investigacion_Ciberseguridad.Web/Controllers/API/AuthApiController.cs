@@ -54,7 +54,6 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
 
             var roles = await _userManager.GetRolesAsync(usuario);
 
-            // 5. Claims: datos que van adentro del token
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, usuario.Id),
@@ -62,18 +61,15 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // ID token
             };
 
-            // Agregamos todos los roles que tenga el usuario a los claims
             foreach (var rol in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, rol));
             }
 
-            // 6. Preparamos la Clave Secreta 
             var secretKey = _configuration["JwtSettings:SecretKey"];
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            // 7. Token con su fecha de vencimiento 
             var expiracion = DateTime.UtcNow.AddHours(2);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -88,13 +84,55 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
             var securityToken = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(securityToken);
 
-            // 8. Devolvemos el JSON de éxito con el token
             return Ok(new
             {
                 mensaje = "Login exitoso",
                 token = tokenString,
                 expiracion = expiracion
             });
+        }
+
+        [HttpPost("registrar")]
+        public async Task<IActionResult> Registrar([FromBody] RegistroViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var emailExistente = await _userManager.FindByEmailAsync(model.Email);
+            if (emailExistente != null)
+            {
+                return BadRequest(new { mensaje = "El correo electrónico ya está registrado." });
+            }
+
+            var userExistente = await _userManager.FindByNameAsync(model.UserName);
+            if (userExistente != null)
+            {
+                return BadRequest(new { mensaje = "El nombre de usuario ya está en uso." });
+            }
+
+            var nuevoUsuario = new Usuario
+            {
+                UserName = model.UserName,
+                Email = model.Email,
+                Nombre = model.Nombre,
+                Apellido = model.Apellido,
+                FechaNacimiento = model.FechaNacimiento.Value, 
+                FechaRegistro = DateTime.UtcNow,
+                EmailConfirmed = true
+            };
+
+            var resultado = await _userManager.CreateAsync(nuevoUsuario, model.Password);
+
+            if (!resultado.Succeeded)
+            {
+                return BadRequest(new { errores = resultado.Errors.Select(e => e.Description) });
+            }
+
+            await _userManager.AddToRoleAsync(nuevoUsuario, "Usuario");
+
+            return Ok(new { mensaje = "Usuario registrado con éxito mediante la API." });
         }
     }
 }
