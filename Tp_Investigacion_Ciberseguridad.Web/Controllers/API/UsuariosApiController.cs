@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 using Tp_Investigacion_Ciberseguridad.Core.Entidades;
 using Tp_Investigacion_Ciberseguridad.Core.Interfaces;
 using Tp_Investigacion_Ciberseguridad.Web.Models.ViewModels;
@@ -14,11 +16,13 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
     {
         private readonly IAdminServicio _adminServicio;
         private readonly IUsuarioServicio _usuarioServicio;
+        private readonly IAuditoriaServicio _auditoriaServicio;
 
-        public UsuariosApiController(IAdminServicio adminServicio, IUsuarioServicio usuarioServicio)
+        public UsuariosApiController(IAdminServicio adminServicio, IUsuarioServicio usuarioServicio, IAuditoriaServicio auditoriaServicio)
         {
             _adminServicio = adminServicio;
             _usuarioServicio = usuarioServicio;
+            _auditoriaServicio = auditoriaServicio;
         }
 
         [HttpGet("perfil")]
@@ -54,7 +58,7 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
 
             if (await _usuarioServicio.ExisteUsuarioAsync(model.Email))
             {
-                return BadRequest(new { mensaje = "El correo electrónico ya está en uso." });
+                return BadRequest(new { mensaje = "Correo electronico en uso." });
             }
 
             var nuevoUsuario = new Usuario
@@ -77,7 +81,19 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
 
             await _usuarioServicio.AsignarRolAsync(nuevoUsuario, "Usuario");
 
-            return Ok(new { mensaje = "Usuario creado exitosamente por el Administrador." });
+            var adminId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value ?? "sistema-api";
+            var adminEmail = User.FindFirst(ClaimTypes.Email)?.Value ?? "Admin API";
+
+            await _auditoriaServicio.RegistrarAsync(
+                adminId: adminId,
+                adminNombre: adminEmail,
+                tipo: TipoActividad.CreacionUsuario,
+                usuarioAfectadoId: nuevoUsuario.Id,
+                usuarioAfectadoNombre: $"{nuevoUsuario.Nombre} {nuevoUsuario.Apellido}",
+                detalle: "Rol asignado: Usuario"
+            );
+
+            return Ok(new { mensaje = $"Usuario creado exitosamente."});
         }
 
 
@@ -113,6 +129,18 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
                 await _usuarioServicio.AsignarRolAsync(usuario, model.Rol);
             }
 
+            var adminId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value ?? "sistema-api";
+            var adminEmail = User.FindFirst(ClaimTypes.Email)?.Value ?? "Admin API";
+
+            await _auditoriaServicio.RegistrarAsync(
+                adminId: adminId,
+                adminNombre: adminEmail,
+                tipo: TipoActividad.EdicionUsuario,
+                usuarioAfectadoId: usuario.Id,
+                usuarioAfectadoNombre: $"{usuario.Nombre} {usuario.Apellido}",
+                detalle: null
+            );
+
             return Ok(new { mensaje = $"Usuario {usuario.Email} actualizado correctamente." });
         }
 
@@ -128,6 +156,18 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
             }
 
             await _adminServicio.EliminarUsuarioAsync(id);
+
+            var adminId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value ?? "sistema-api";
+            var adminEmail = User.FindFirst(ClaimTypes.Email)?.Value ?? "Admin API";
+
+            await _auditoriaServicio.RegistrarAsync(
+                adminId: adminId,
+                adminNombre: adminEmail,
+                tipo: TipoActividad.EliminacionUsuario,
+                usuarioAfectadoId: usuario.Id,
+                usuarioAfectadoNombre: $"{usuario.Nombre} {usuario.Apellido}",
+                detalle: null
+            );
 
             return Ok(new { mensaje = $"Usuario {usuario.Email} eliminado correctamente." });
         }

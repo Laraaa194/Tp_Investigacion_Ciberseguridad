@@ -35,31 +35,59 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
 
             var usuario = await _userManager.FindByEmailAsync(model.Email);
 
-            if (usuario == null || !await _userManager.CheckPasswordAsync(usuario, model.Password))
+            if (usuario == null)
             {
-                if (usuario != null)
+                return Unauthorized(new { mensaje = "Usuario o contraseña incorrectos." });
+            }
+
+            if (await _userManager.IsLockedOutAsync(usuario))
+            {
+                return Unauthorized(new { mensaje = "Cuenta bloqueada temporalmente. Intentar de nuevo mas tarde." });
+                }
+
+            var passwordValida = await _userManager.CheckPasswordAsync(usuario, model.Password);
+
+            if (!passwordValida)
+            {
+                await _userManager.AccessFailedAsync(usuario);
+                await _userManager.UpdateAsync(usuario);
+
+                if (await _userManager.IsLockedOutAsync(usuario))
                 {
                     await _auditoriaServicio.RegistrarAsync(
                         adminId: "sistema-api",
                         adminNombre: "Sistema API",
-                        tipo: TipoActividad.LoginFallido,
+                        tipo: TipoActividad.CuentaBloqueada,
                         usuarioAfectadoId: usuario.Id,
-                        usuarioAfectadoNombre: usuario.Email ?? "Desconocido",
-                        detalle: "Intento de login fallido vía API (JWT)"
+                        usuarioAfectadoNombre: usuario.Email ?? usuario.UserName ?? "Desconocido",
+                        detalle: "Se supero el limite de intentos fallidos"
                     );
+
+                    return Unauthorized(new { mensaje = "Cuenta bloqueada temporalmente. Intentar de nuevo mas tarde." });
                 }
+
+                await _auditoriaServicio.RegistrarAsync(
+                    adminId: "sistema-api",
+                    adminNombre: "Sistema API",
+                    tipo: TipoActividad.LoginFallido,
+                    usuarioAfectadoId: usuario.Id,
+                    usuarioAfectadoNombre: usuario.Email ?? usuario.UserName ?? "Desconocido",
+                    detalle: "Intento de login fallido"
+                );
 
                 return Unauthorized(new { mensaje = "Usuario o contraseña incorrectos." });
             }
 
+            await _userManager.ResetAccessFailedCountAsync(usuario);
+
             var roles = await _userManager.GetRolesAsync(usuario);
 
             var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, usuario.Id),
-                new Claim(JwtRegisteredClaimNames.Email, usuario.Email!),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // ID token
-            };
+                {
+                    new Claim(JwtRegisteredClaimNames.Sub, usuario.Id),
+                    new Claim(JwtRegisteredClaimNames.Email, usuario.Email!),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                };
 
             foreach (var rol in roles)
             {
@@ -103,13 +131,13 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
             var emailExistente = await _userManager.FindByEmailAsync(model.Email);
             if (emailExistente != null)
             {
-                return BadRequest(new { mensaje = "El correo electrónico ya está registrado." });
+                return BadRequest(new { mensaje = "El correo electronico ya registrado." });
             }
 
             var userExistente = await _userManager.FindByNameAsync(model.UserName);
             if (userExistente != null)
             {
-                return BadRequest(new { mensaje = "El nombre de usuario ya está en uso." });
+                return BadRequest(new { mensaje = "Nombre de usuario existente." });
             }
 
             var nuevoUsuario = new Usuario
@@ -132,7 +160,7 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
 
             await _userManager.AddToRoleAsync(nuevoUsuario, "Usuario");
 
-            return Ok(new { mensaje = "Usuario registrado con éxito mediante la API." });
+            return Ok(new { mensaje = "Usuario registrado con exito" });
         }
     }
 }
