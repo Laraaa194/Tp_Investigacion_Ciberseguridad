@@ -15,12 +15,14 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
     public class AuthApiController : ControllerBase
     {
         private readonly UserManager<Usuario> _userManager;
+        private readonly SignInManager<Usuario> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly IAuditoriaServicio _auditoriaServicio;
 
-        public AuthApiController(UserManager<Usuario> userManager, IConfiguration configuration, IAuditoriaServicio auditoriaServicio)
+        public AuthApiController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, IConfiguration configuration, IAuditoriaServicio auditoriaServicio)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
             _configuration = configuration;
             _auditoriaServicio = auditoriaServicio;
         }
@@ -40,32 +42,23 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
                 return Unauthorized(new { mensaje = "Usuario o contraseña incorrectos." });
             }
 
-            if (await _userManager.IsLockedOutAsync(usuario))
+            var resultado = await _signInManager.CheckPasswordSignInAsync(usuario, model.Password, lockoutOnFailure: true);
+
+            if (resultado.IsLockedOut)
             {
+                await _auditoriaServicio.RegistrarAsync(
+                    adminId: "sistema-api",
+                    adminNombre: "Sistema API",
+                    tipo: TipoActividad.CuentaBloqueada,
+                    usuarioAfectadoId: usuario.Id,
+                    usuarioAfectadoNombre: usuario.Email ?? usuario.UserName ?? "Desconocido",
+                    detalle: "Se supero el limite de intentos fallidos"
+                );
                 return Unauthorized(new { mensaje = "Cuenta bloqueada temporalmente. Intentar de nuevo mas tarde." });
-                }
+            }
 
-            var passwordValida = await _userManager.CheckPasswordAsync(usuario, model.Password);
-
-            if (!passwordValida)
+            if (!resultado.Succeeded)
             {
-                await _userManager.AccessFailedAsync(usuario);
-                await _userManager.UpdateAsync(usuario);
-
-                if (await _userManager.IsLockedOutAsync(usuario))
-                {
-                    await _auditoriaServicio.RegistrarAsync(
-                        adminId: "sistema-api",
-                        adminNombre: "Sistema API",
-                        tipo: TipoActividad.CuentaBloqueada,
-                        usuarioAfectadoId: usuario.Id,
-                        usuarioAfectadoNombre: usuario.Email ?? usuario.UserName ?? "Desconocido",
-                        detalle: "Se supero el limite de intentos fallidos"
-                    );
-
-                    return Unauthorized(new { mensaje = "Cuenta bloqueada temporalmente. Intentar de nuevo mas tarde." });
-                }
-
                 await _auditoriaServicio.RegistrarAsync(
                     adminId: "sistema-api",
                     adminNombre: "Sistema API",
@@ -77,8 +70,6 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
 
                 return Unauthorized(new { mensaje = "Usuario o contraseña incorrectos." });
             }
-
-            await _userManager.ResetAccessFailedCountAsync(usuario);
 
             var roles = await _userManager.GetRolesAsync(usuario);
 
