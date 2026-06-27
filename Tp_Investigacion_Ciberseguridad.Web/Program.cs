@@ -7,6 +7,9 @@ using Tp_Investigacion_Ciberseguridad.Data;
 using Tp_Investigacion_Ciberseguridad.Data.Identity;
 using Tp_Investigacion_Ciberseguridad.Data.Seeders;
 using Tp_Investigacion_Ciberseguridad.Data.Servicios;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,12 +45,25 @@ builder.Services.AddAuthentication()
         // Lee las credenciales del appsettings
         options.ClientId = googleAuthNSection["ClientId"];
         options.ClientSecret = googleAuthNSection["ClientSecret"];
+    }).AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+            ValidAudience = builder.Configuration["JwtSettings:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!)),
+            ClockSkew = TimeSpan.Zero
+        };
     });
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-
 //Configuracion base cookies
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
@@ -87,6 +103,7 @@ app.UseAuthorization();
 app.MapStaticAssets();
 
 app.MapRazorPages();
+app.MapControllers();
 
 app.MapControllerRoute(
     name: "default",
