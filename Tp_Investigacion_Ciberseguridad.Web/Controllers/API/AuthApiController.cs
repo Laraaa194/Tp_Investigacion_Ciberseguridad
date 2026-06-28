@@ -14,16 +14,14 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
     [Route("api/auth")]
     public class AuthApiController : ControllerBase
     {
-        private readonly UserManager<Usuario> _userManager;
-        private readonly SignInManager<Usuario> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly IUsuarioServicio _usuarioServicio;
         private readonly IAuditoriaServicio _auditoriaServicio;
 
-        public AuthApiController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, IConfiguration configuration, IAuditoriaServicio auditoriaServicio)
+        public AuthApiController( IConfiguration configuration, IUsuarioServicio usuarioServicio, IAuditoriaServicio auditoriaServicio)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
             _configuration = configuration;
+            _usuarioServicio = usuarioServicio;
             _auditoriaServicio = auditoriaServicio;
         }
 
@@ -35,14 +33,14 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
                 return BadRequest(ModelState);
             }
 
-            var usuario = await _userManager.FindByEmailAsync(model.Email);
+            var usuario = await _usuarioServicio.ObtenerUsuarioPorEmail(model.Email);
 
             if (usuario == null)
             {
                 return Unauthorized(new { mensaje = "Usuario o contraseña incorrectos." });
             }
 
-            var resultado = await _signInManager.CheckPasswordSignInAsync(usuario, model.Password, lockoutOnFailure: true);
+            var resultado = await _usuarioServicio.ValidarCredencialesAsync(usuario, model.Password);
 
             if (resultado.IsLockedOut)
             {
@@ -71,7 +69,7 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
                 return Unauthorized(new { mensaje = "Usuario o contraseña incorrectos." });
             }
 
-            var roles = await _userManager.GetRolesAsync(usuario);
+            var roles = await _usuarioServicio.ObtenerRolesDeUsuarioAsync(usuario);
 
             var claims = new List<Claim>
                 {
@@ -119,13 +117,13 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
                 return BadRequest(ModelState);
             }
 
-            var emailExistente = await _userManager.FindByEmailAsync(model.Email);
+            var emailExistente = await _usuarioServicio.ObtenerUsuarioPorEmail(model.Email);
             if (emailExistente != null)
             {
                 return BadRequest(new { mensaje = "El correo electronico ya registrado." });
             }
 
-            var userExistente = await _userManager.FindByNameAsync(model.UserName);
+            var userExistente = await _usuarioServicio.ObtenerUsuarioPorNombre(model.UserName);
             if (userExistente != null)
             {
                 return BadRequest(new { mensaje = "Nombre de usuario existente." });
@@ -142,14 +140,14 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
                 EmailConfirmed = true
             };
 
-            var resultado = await _userManager.CreateAsync(nuevoUsuario, model.Password);
+            var resultado = await _usuarioServicio.GuardarUsuarioAsync(nuevoUsuario, model.Password);
 
             if (!resultado.Succeeded)
             {
                 return BadRequest(new { errores = resultado.Errors.Select(e => e.Description) });
             }
 
-            await _userManager.AddToRoleAsync(nuevoUsuario, "Usuario");
+            await _usuarioServicio.AsignarRolAsync(nuevoUsuario, "Usuario");
 
             return Ok(new { mensaje = "Usuario registrado con exito" });
         }
