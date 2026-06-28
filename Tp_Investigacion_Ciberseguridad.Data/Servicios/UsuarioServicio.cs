@@ -31,6 +31,10 @@ namespace Tp_Investigacion_Ciberseguridad.Data.Servicios
             return await _userManager.FindByEmailAsync(email);
         }
 
+        public async Task<Usuario> ObtenerUsuarioPorNombre(string nombre)
+        {
+            return await _userManager.FindByNameAsync(nombre);
+        }
 
         public async Task<SignInResult> IniciarSesionAsync(Usuario usuario, string password, bool rememberMe)
         {
@@ -40,6 +44,11 @@ namespace Tp_Investigacion_Ciberseguridad.Data.Servicios
                 rememberMe,
                 lockoutOnFailure: true
             );
+        }
+
+        public async Task<SignInResult> ValidarCredencialesAsync(Usuario usuario, string password)
+        {
+            return await _signInManager.CheckPasswordSignInAsync(usuario, password, lockoutOnFailure: true);
         }
 
         public async Task<IdentityResult> GuardarUsuarioAsync(Usuario usuario, string password)
@@ -60,6 +69,11 @@ namespace Tp_Investigacion_Ciberseguridad.Data.Servicios
                 }
             }
             return await _userManager.AddToRoleAsync(usuario, v);
+        }
+
+        public async Task<IList<string>> ObtenerRolesDeUsuarioAsync(Usuario usuario)
+        {
+            return await _userManager.GetRolesAsync(usuario);
         }
 
         public Task<bool> ExisteUsuarioAsync(string email)
