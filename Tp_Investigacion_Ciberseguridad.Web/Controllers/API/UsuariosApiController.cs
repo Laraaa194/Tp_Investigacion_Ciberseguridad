@@ -6,6 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Tp_Investigacion_Ciberseguridad.Core.Entidades;
 using Tp_Investigacion_Ciberseguridad.Core.Interfaces;
 using Tp_Investigacion_Ciberseguridad.Web.Models.ViewModels;
+using Tp_Investigacion_Ciberseguridad.Web.Mappers;
 
 namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
 {
@@ -61,16 +62,7 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
                 return BadRequest(new { mensaje = "Correo electronico en uso." });
             }
 
-            var nuevoUsuario = new Usuario
-            {
-                UserName = model.UserName,
-                Email = model.Email,
-                Nombre = model.Nombre,
-                Apellido = model.Apellido,
-                FechaNacimiento = model.FechaNacimiento.Value,
-                FechaRegistro = DateTime.UtcNow,
-                EmailConfirmed = true
-            };
+            Usuario nuevoUsuario = UsuarioMapper.MapearAUsuario(model);
 
             var resultado = await _usuarioServicio.GuardarUsuarioAsync(nuevoUsuario, model.Password);
 
@@ -93,9 +85,8 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
                 detalle: "Rol asignado: Usuario"
             );
 
-            return Ok(new { mensaje = $"Usuario creado exitosamente."});
+            return Ok(new { mensaje = $"Usuario creado exitosamente." });
         }
-
 
         [Authorize(Roles = "Admin")]
         [HttpPut("ModificarUsuario")]

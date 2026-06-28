@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using Tp_Investigacion_Ciberseguridad.Core.Entidades;
 using Tp_Investigacion_Ciberseguridad.Core.Interfaces;
+using Tp_Investigacion_Ciberseguridad.Web.Mappers;
 using Tp_Investigacion_Ciberseguridad.Web.Models.ViewModels;
 
 namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
@@ -14,15 +15,15 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
     [Route("api/auth")]
     public class AuthApiController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
         private readonly IUsuarioServicio _usuarioServicio;
         private readonly IAuditoriaServicio _auditoriaServicio;
+        private readonly ITokenServicio _tokenServicio;
 
-        public AuthApiController( IConfiguration configuration, IUsuarioServicio usuarioServicio, IAuditoriaServicio auditoriaServicio)
+        public AuthApiController(IUsuarioServicio usuarioServicio, IAuditoriaServicio auditoriaServicio, ITokenServicio tokenServicio)
         {
-            _configuration = configuration;
             _usuarioServicio = usuarioServicio;
             _auditoriaServicio = auditoriaServicio;
+            _tokenServicio = tokenServicio;
         }
 
         [HttpPost("login")]
@@ -71,41 +72,13 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
 
             var roles = await _usuarioServicio.ObtenerRolesDeUsuarioAsync(usuario);
 
-            var claims = new List<Claim>
-                {
-                    new Claim(JwtRegisteredClaimNames.Sub, usuario.Id),
-                    new Claim(JwtRegisteredClaimNames.Email, usuario.Email!),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                };
-
-            foreach (var rol in roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, rol));
-            }
-
-            var secretKey = _configuration["JwtSettings:SecretKey"];
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var expiracion = DateTime.UtcNow.AddHours(2);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = expiracion,
-                Issuer = _configuration["JwtSettings:Issuer"],
-                Audience = _configuration["JwtSettings:Audience"],
-                SigningCredentials = creds
-            };
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var securityToken = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(securityToken);
+            var jwt = _tokenServicio.GenerarToken(usuario, roles);
 
             return Ok(new
             {
                 mensaje = "Login exitoso",
-                token = tokenString,
-                expiracion = expiracion
+                token = jwt.TokenString,
+                expiracion = jwt.Expiracion
             });
         }
 
@@ -129,16 +102,7 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers.Api
                 return BadRequest(new { mensaje = "Nombre de usuario existente." });
             }
 
-            var nuevoUsuario = new Usuario
-            {
-                UserName = model.UserName,
-                Email = model.Email,
-                Nombre = model.Nombre,
-                Apellido = model.Apellido,
-                FechaNacimiento = model.FechaNacimiento.Value, 
-                FechaRegistro = DateTime.UtcNow,
-                EmailConfirmed = true
-            };
+            Usuario nuevoUsuario = UsuarioMapper.MapearAUsuario(model);
 
             var resultado = await _usuarioServicio.GuardarUsuarioAsync(nuevoUsuario, model.Password);
 
