@@ -4,9 +4,108 @@
 }
 
 @section Styles{
+    <link href="~/css/inicio-usuario.css" rel="stylesheet" />
 }
 
-<div> Inicio del usuario</div>
+<div class="d-flex align-items-center justify-content-center px-3">
+    <div class="w-100" style="max-width: 860px;">
 
+        <div class="welcome-hero text-center mb-5">
+            <h1>BIENVENID@@</h1>
+            <p class="username mt-2">@ViewBag.UserName</p>
+        </div>
+
+        <div class="divider mb-5"></div>
+
+        <div class="welcome-description text-center mb-5">
+            <p class="mx-auto" style="max-width: 560px;">
+                Estás siendo parte de nuestra aplicación educativa sobre
+                <strong>ciberseguridad</strong>, donde nos enfocamos
+                en mitigar las vulnerabilidades del
+                <strong>Top 10 de OWASP</strong>.
+            </p>
+
+        </div>
+
+        <div class="mt-4">
+            <p class="section-eyebrow text-center mb-4">OWASP Top 10 — 2021</p>
+            <div class="row row-cols-2 row-cols-sm-3 row-cols-md-5 g-3">
+                <div class="col">
+                    <div class="owasp-card h-100">
+                        <div class="owasp-label mb-1">A01</div>
+                        <div class="owasp-icon mb-1"><i class="bi bi-shield-lock"></i></div>
+                        <div class="owasp-title">Control de Acceso</div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="owasp-card h-100">
+                        <div class="owasp-label mb-1">A02</div>
+                        <div class="owasp-icon mb-1"><i class="bi bi-key"></i></div>
+                        <div class="owasp-title">Fallas Criptográficas</div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="owasp-card h-100">
+                        <div class="owasp-label mb-1">A03</div>
+                        <div class="owasp-icon mb-1"><i class="bi bi-code-slash"></i></div>
+                        <div class="owasp-title">Inyección</div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="owasp-card h-100">
+                        <div class="owasp-label mb-1">A04</div>
+                        <div class="owasp-icon mb-1"><i class="bi bi-exclamation-triangle"></i></div>
+                        <div class="owasp-title">Diseño Inseguro</div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="owasp-card h-100">
+                        <div class="owasp-label mb-1">A05</div>
+                        <div class="owasp-icon mb-1"><i class="bi bi-gear"></i></div>
+                        <div class="owasp-title">Mala Configuración</div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="owasp-card h-100">
+                        <div class="owasp-label mb-1">A06</div>
+                        <div class="owasp-icon mb-1"><i class="bi bi-box-seam"></i></div>
+                        <div class="owasp-title">Componentes Vulnerables</div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="owasp-card h-100">
+                        <div class="owasp-label mb-1">A07</div>
+                        <div class="owasp-icon mb-1"><i class="bi bi-person-x"></i></div>
+                        <div class="owasp-title">Fallas de Autenticación</div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="owasp-card h-100">
+                        <div class="owasp-label mb-1">A08</div>
+                        <div class="owasp-icon mb-1"><i class="bi bi-arrow-left-right"></i></div>
+                        <div class="owasp-title">Integridad de Datos</div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="owasp-card h-100">
+                        <div class="owasp-label mb-1">A09</div>
+                        <div class="owasp-icon mb-1"><i class="bi bi-journal-text"></i></div>
+                        <div class="owasp-title">Fallas de Logging</div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="owasp-card h-100">
+                        <div class="owasp-label mb-1">A10</div>
+                        <div class="owasp-icon mb-1"><i class="bi bi-wifi-off"></i></div>
+                        <div class="owasp-title">SSRF</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
 @section Scripts {
 }

@@ -27,7 +27,7 @@ body {
     min-height: calc(100vh - 60px);
 }
 
-    /* El fondo va en un pseudo-elemento para poder blurearlo sin afectar el contenido */
+
     .gs-page-bg::before {
         content: '';
         position: absolute;
@@ -35,7 +35,7 @@ body {
         background-image: url('/img/fondo-ciberseg.png');
         background-size: cover;
         background-position: center;
-        filter: blur(2px) brightness(0.2);
+        filter: blur(2px) brightness(0.3);
         z-index: 0;
     }
 

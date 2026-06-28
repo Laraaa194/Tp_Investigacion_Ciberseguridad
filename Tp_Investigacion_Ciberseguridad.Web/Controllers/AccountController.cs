@@ -62,7 +62,7 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
 
             if (resultado.IsLockedOut)
             {
-                // Se acaba de bloquear en este intento → registramos el bloqueo
+                
                 await _auditoriaServicio.RegistrarAsync(
                     adminId: "sistema",
                     adminNombre: "Sistema",
@@ -76,7 +76,7 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
                 return View("InicioSesion", model);
             }
 
-            // Credenciales incorrectas, pero todavía no bloqueada → registramos el intento fallido
+            
             await _auditoriaServicio.RegistrarAsync(
                 adminId: "sistema",
                 adminNombre: "Sistema",
@@ -126,17 +126,16 @@ namespace Tp_Investigacion_Ciberseguridad.Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult LoginExterno(string proveedor)
         {
-            // 1. Configuramos a dónde tiene que volver el usuario una vez que Google lo autentique.
-            // Apuntamos a una acción de tu controlador que procesará el resultado.
             var urlRetorno = Url.Action("CallbackLoginExterno", "Account");
 
-            // 2. Le pedimos a Identity que arme las propiedades del desafío de OAuth 2.0
             var propiedades = _signInManager.ConfigureExternalAuthenticationProperties(proveedor, urlRetorno);
-
-            // 3. Lanzamos el desafío (ChallengeResult). 
-            // Esto le dice a ASP.NET: "Tomá el control vos y redirigí al usuario a Google de forma segura".
+            
             return Challenge(propiedades, proveedor);
         }
+
+// 3. Lanzamos el desafío (ChallengeResult). 
+            // Esto le dice a ASP.NET: "Tomá el control vos y redirigí al usuario a Google de forma segura".
+
 
         // Esta es la acción que va a recibir la respuesta final de Google
         [HttpGet]

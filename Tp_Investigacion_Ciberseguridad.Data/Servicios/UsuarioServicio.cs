@@ -44,22 +44,22 @@ namespace Tp_Investigacion_Ciberseguridad.Data.Servicios
 
         public async Task<IdentityResult> GuardarUsuarioAsync(Usuario usuario, string password)
         {
-            return await _signInManager.UserManager.CreateAsync(usuario, password);
+            return await _userManager.CreateAsync(usuario, password);
         }
 
         public async Task<IdentityResult> AsignarRolAsync(Usuario usuario, string v)
         {
-            var rolesActuales = await _signInManager.UserManager.GetRolesAsync(usuario);
+            var rolesActuales = await _userManager.GetRolesAsync(usuario);
 
             if (rolesActuales.Any())
             {
-                var removeResult = await _signInManager.UserManager.RemoveFromRolesAsync(usuario, rolesActuales);
+                var removeResult = await _userManager.RemoveFromRolesAsync(usuario, rolesActuales);
                 if (!removeResult.Succeeded)
                 {
                     return removeResult;
                 }
             }
-            return await _signInManager.UserManager.AddToRoleAsync(usuario, v);
+            return await _userManager.AddToRoleAsync(usuario, v);
         }
 
         public Task<bool> ExisteUsuarioAsync(string email)
