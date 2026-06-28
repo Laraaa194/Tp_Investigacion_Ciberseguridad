@@ -35,7 +35,7 @@ namespace Tp_Investigacion_Ciberseguridad.Data.Servicios
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var expiracion = DateTime.UtcNow.AddHours(2);
+            var expiracion = DateTime.UtcNow.AddMinutes(15);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
