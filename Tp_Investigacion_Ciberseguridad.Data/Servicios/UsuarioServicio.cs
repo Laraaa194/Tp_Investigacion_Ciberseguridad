@@ -21,10 +21,6 @@ namespace Tp_Investigacion_Ciberseguridad.Data.Servicios
             _signInManager = signInManager;
         }
 
-        public void guardarUsuario(Usuario usuario)
-        {
-           ;
-        }
 
         public async Task<Usuario> ObtenerUsuarioPorEmail(string email)
         {
@@ -56,7 +52,7 @@ namespace Tp_Investigacion_Ciberseguridad.Data.Servicios
             return await _userManager.CreateAsync(usuario, password);
         }
 
-        public async Task<IdentityResult> AsignarRolAsync(Usuario usuario, string v)
+        public async Task<IdentityResult> AsignarRolAsync(Usuario usuario, string nuevoRol)
         {
             var rolesActuales = await _userManager.GetRolesAsync(usuario);
 
@@ -68,7 +64,7 @@ namespace Tp_Investigacion_Ciberseguridad.Data.Servicios
                     return removeResult;
                 }
             }
-            return await _userManager.AddToRoleAsync(usuario, v);
+            return await _userManager.AddToRoleAsync(usuario, nuevoRol);
         }
 
         public async Task<IList<string>> ObtenerRolesDeUsuarioAsync(Usuario usuario)

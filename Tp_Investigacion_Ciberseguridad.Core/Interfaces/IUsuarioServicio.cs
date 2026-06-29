@@ -9,8 +9,6 @@ namespace Tp_Investigacion_Ciberseguridad.Core.Interfaces
     public interface IUsuarioServicio
     {
 
-        void guardarUsuario(Usuario usuario);
-
         Task<Usuario> ObtenerUsuarioPorEmail(string email);
         Task<Usuario> ObtenerUsuarioPorNombre(string nombre);
         Task<SignInResult> IniciarSesionAsync(Usuario usuario, string password, bool rememberMe);
